@@ -1,36 +1,31 @@
 services:
   db:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     container_name: moonite-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-test}
-      POSTGRES_DB: ${POSTGRES_DB:-moonite}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: moonite
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "5432:5432"
     volumes:
-      - moonite_pg_data:/var/lib/postgresql/data
+      - moonite_pg_data:/var/lib/postgresql   # ✅ PG18写法
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d moonite"]
       interval: 5s
       timeout: 5s
       retries: 10
-      start_period: 10s
 
   api:
     build: .
     container_name: moonite-api
     restart: unless-stopped
     environment:
-      APP_NAME: ${APP_NAME:-moonite}
-      DEBUG: ${DEBUG:-false}
-      # 在 Compose 网络内须使用主机名 db；若 .env 里写成 127.0.0.1，api 容器将无法连库
-      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://postgres:test@db:5432/moonite}
-      API_HOST: ${API_HOST:-0.0.0.0}
-      API_PORT: "8000"
+      ENV: dev
+      DATABASE_URL: postgresql+asyncpg://postgres:test@db:5432/moonite
     ports:
-      - "${HOST_PORT:-8000}:8000"
+      - "8000:8000"
     depends_on:
       db:
         condition: service_healthy

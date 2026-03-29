@@ -22,3 +22,8 @@ docker compose up -d db
 ```
 
 数据库初始化脚本见 `resource/sql/`（按文件名依赖顺序执行）。
+
+### 测试
+
+- 不连库的用例：`pytest app/tests/test_health.py`
+- 管理端 API 集成测试（需 PostgreSQL，默认库名 `moonite_test`，可用环境变量 `TEST_DATABASE_URL` 覆盖）：先 `createdb moonite_test`（或等价），再 `pytest app/tests/integration/`

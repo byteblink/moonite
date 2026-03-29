@@ -12,7 +12,6 @@ class Settings(BaseSettings):
     app_name: str = "moonite"
     debug: bool = False
     database_url: str = Field(
-        default="postgresql+asyncpg://postgres:test@127.0.0.1:5432/moonite",
         validation_alias=AliasChoices("DATABASE_URL", "database_url"),
     )
     api_host: str = Field(default="0.0.0.0", validation_alias=AliasChoices("API_HOST", "api_host"))
