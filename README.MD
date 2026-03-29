@@ -21,9 +21,26 @@ docker compose up --build -d
 docker compose up -d db
 ```
 
-数据库初始化脚本见 `resource/sql/`（按文件名依赖顺序执行）。
+### 数据库迁移与管理 (Alembic)
 
-### 测试
+本项目使用 [Alembic](https://alembic.sqlalchemy.org/) 进行数据库版本控制和变更管理。在配置好 `.env` 中的 `DATABASE_URL` 并且本地数据库就绪后，可以通过以下命令管理表结构：
 
-- 不连库的用例：`pytest app/tests/test_health.py`
-- 管理端 API 集成测试（需 PostgreSQL，默认库名 `moonite_test`，可用环境变量 `TEST_DATABASE_URL` 覆盖）：先 `createdb moonite_test`（或等价），再 `pytest app/tests/integration/`
+**1. 初始化/更新全部数据表**
+当你全新启动本地数据库，或拉取了带新表结构的最新代码后，执行此命令自动建表和更新：
+```bash
+alembic upgrade head
+```
+*(注：项目早期的 `resource/sql/` 初始化脚本已被废弃并作为历史归档，请以此方式为准。)*
+
+**2. 基于模型变更生成迁移脚本**
+如果你修改了 `app/models/` 下的数据模型类，你需要生成一份变更脚本：
+```bash
+alembic revision --autogenerate -m "这里填写修改的简短描述，如 add_xxx_field"
+```
+
+**3. 审查与应用**
+生成脚本后，建议先人工预览一下 `alembic/versions/` 目录里新生成的 Python 代码。确认无误后，再次将更改应用到数据库：
+```bash
+alembic upgrade head
+```
+

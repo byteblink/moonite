@@ -17,10 +17,10 @@ class User(Base):
     gender: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
     birthday: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="false")
+    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=text("now()")
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=text("now()")
     )
-    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)

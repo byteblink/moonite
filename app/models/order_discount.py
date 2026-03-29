@@ -21,10 +21,10 @@ class OrderDiscount(Base):
     external_platform: Mapped[str] = mapped_column(String(16), nullable=False, server_default="")
     discount_reason: Mapped[str] = mapped_column(String(200), nullable=False, server_default="")
     is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="false")
+    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=text("now()")
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=text("now()")
     )
-    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)

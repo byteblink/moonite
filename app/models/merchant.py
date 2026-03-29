@@ -16,10 +16,10 @@ class Merchant(Base):
     contact_mobile: Mapped[str] = mapped_column(String(32), nullable=False, server_default="")
     company_type: Mapped[str] = mapped_column(String(32), nullable=False, server_default="")
     is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="false")
+    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=text("now()")
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=text("now()")
     )
-    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
