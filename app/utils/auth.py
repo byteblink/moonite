@@ -8,14 +8,27 @@ from typing import Any
 
 from app.core.config import settings
 
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(
+    schemes=["argon2"],
+    deprecated="auto"
+)
 
 def hash_password(password: str) -> str:
-    raw = f"{settings.jwt_secret}:{password}".encode("utf-8")
-    return hashlib.sha256(raw).hexdigest()
+    return pwd_context.hash(password)
+
+def verify_password(password: str, hashed: str) -> bool:
+    return pwd_context.verify(password, hashed)
 
 
-def verify_password(password: str, password_hash: str) -> bool:
-    return hmac.compare_digest(hash_password(password), password_hash)
+# def hash_password(password: str) -> str:
+#     raw = f"{settings.jwt_secret}:{password}".encode("utf-8")
+#     return hashlib.sha256(raw).hexdigest()
+
+
+# def verify_password(password: str, password_hash: str) -> bool:
+#     return hmac.compare_digest(hash_password(password), password_hash)
 
 
 def hash_token(token: str) -> str:
