@@ -5,6 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class MerchantBase(BaseModel):
+    tenant_id: int
     company_name: str = ""  # 公司名
     contact_name: str = ""  # 联系人
     contact_mobile: str = ""  # 联系人手机号
@@ -16,6 +17,7 @@ class MerchantCreate(MerchantBase):
 
 
 class MerchantUpdate(BaseModel):
+    tenant_id: int | None = None
     company_name: str | None = None  # 公司名
     contact_name: str | None = None  # 联系人
     contact_mobile: str | None = None  # 联系人手机号

@@ -7,22 +7,20 @@ from app.schemas.user import UserCreate, UserUpdate
 
 
 async def list_users(
-    session: AsyncSession, *, skip: int, limit: int, include_deleted: bool
+    session: AsyncSession, *, skip: int, limit: int
 ) -> tuple[list[User], int]:
     base = select(User)
     count_q = select(func.count()).select_from(User)
-    if not include_deleted:
-        base = base.where(User.is_deleted.is_(False))
-        count_q = count_q.where(User.is_deleted.is_(False))
+    base = base.where(User.is_deleted.is_(False))
+    count_q = count_q.where(User.is_deleted.is_(False))
     total = int((await session.execute(count_q)).scalar_one())
     rows = (await session.execute(base.order_by(User.id.desc()).offset(skip).limit(limit))).scalars().all()
     return list(rows), total
 
 
-async def get_user(session: AsyncSession, user_id: int, *, include_deleted: bool) -> User | None:
+async def get_user(session: AsyncSession, user_id: int) -> User | None:
     q = select(User).where(User.id == user_id)
-    if not include_deleted:
-        q = q.where(User.is_deleted.is_(False))
+    q = q.where(User.is_deleted.is_(False))
     return (await session.execute(q)).scalar_one_or_none()
 
 

@@ -5,6 +5,9 @@ from pydantic import BaseModel, ConfigDict
 
 
 class UserBase(BaseModel):
+    password: str = ""
+    email: str = ""
+    username: str = ""
     mobile: str = ""  # 手机号
     nickname: str = ""  # 昵称
     avatar: str = ""  # 头像 URL
@@ -17,6 +20,9 @@ class UserCreate(UserBase):
 
 
 class UserUpdate(BaseModel):
+    password: str | None = None
+    email: str | None = None
+    username: str | None = None
     mobile: str | None = None  # 手机号
     nickname: str | None = None  # 昵称
     avatar: str | None = None  # 头像 URL

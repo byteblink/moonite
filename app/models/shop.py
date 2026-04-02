@@ -11,6 +11,7 @@ class Shop(Base):
     __tablename__ = "shops"
 
     id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True, comment="主键，自增")
+    tenant_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("tenants.id", ondelete="RESTRICT"), nullable=False, comment="租户ID")
     merchant_id: Mapped[int] = mapped_column(
         BigInteger, ForeignKey("merchants.id", ondelete="RESTRICT"), nullable=False, comment="所属商家ID"
     )

@@ -7,22 +7,20 @@ from app.schemas.shop import ShopCreate, ShopUpdate
 
 
 async def list_shops(
-    session: AsyncSession, *, skip: int, limit: int, include_deleted: bool
+    session: AsyncSession, *, skip: int, limit: int
 ) -> tuple[list[Shop], int]:
     base = select(Shop)
     count_q = select(func.count()).select_from(Shop)
-    if not include_deleted:
-        base = base.where(Shop.is_deleted.is_(False))
-        count_q = count_q.where(Shop.is_deleted.is_(False))
+    base = base.where(Shop.is_deleted.is_(False))
+    count_q = count_q.where(Shop.is_deleted.is_(False))
     total = int((await session.execute(count_q)).scalar_one())
     rows = (await session.execute(base.order_by(Shop.id.desc()).offset(skip).limit(limit))).scalars().all()
     return list(rows), total
 
 
-async def get_shop(session: AsyncSession, shop_id: int, *, include_deleted: bool) -> Shop | None:
+async def get_shop(session: AsyncSession, shop_id: int) -> Shop | None:
     q = select(Shop).where(Shop.id == shop_id)
-    if not include_deleted:
-        q = q.where(Shop.is_deleted.is_(False))
+    q = q.where(Shop.is_deleted.is_(False))
     return (await session.execute(q)).scalar_one_or_none()
 
 

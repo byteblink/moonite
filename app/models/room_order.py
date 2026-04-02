@@ -12,6 +12,7 @@ class RoomOrder(Base):
     __tablename__ = "room_orders"
 
     id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True, comment="主键，自增")
+    tenant_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("tenants.id", ondelete="RESTRICT"), nullable=False, comment="租户ID")
     order_number: Mapped[str] = mapped_column(String(50), nullable=False, comment="生成的订单号")
     ref_id: Mapped[Optional[int]] = mapped_column(
         BigInteger, ForeignKey("room_orders.id", ondelete="SET NULL"), nullable=True, comment="续单时为主订单主键ID，新单为 null"

@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class RoomOrderBase(BaseModel):
+    tenant_id: int
     order_number: str  # 生成的订单号
     ref_id: int | None = None  # 续单时为主订单主键ID，新单为 null
     user_id: int | None = None  # 下单人ID
@@ -38,6 +39,7 @@ class RoomOrderCreate(RoomOrderBase):
 
 
 class RoomOrderUpdate(BaseModel):
+    tenant_id: int | None = None
     order_number: str | None = None  # 生成的订单号
     ref_id: int | None = None  # 续单时为主订单主键ID，新单为 null
     user_id: int | None = None  # 下单人ID

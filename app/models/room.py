@@ -12,6 +12,7 @@ class Room(Base):
     __tablename__ = "rooms"
 
     id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True, comment="主键，自增")
+    tenant_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("tenants.id", ondelete="RESTRICT"), nullable=False, comment="租户ID")
     shop_id: Mapped[int] = mapped_column(
         BigInteger, ForeignKey("shops.id", ondelete="RESTRICT"), nullable=False, comment="所属店铺ID"
     )

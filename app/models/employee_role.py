@@ -7,15 +7,13 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.core.database import Base
 
 
-class Merchant(Base):
-    __tablename__ = "merchants"
+class EmployeeRole(Base):
+    __tablename__ = "employee_roles"
 
     id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True, comment="主键，自增")
-    tenant_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("tenants.id", ondelete="RESTRICT"), nullable=False, comment="租户ID")
-    company_name: Mapped[str] = mapped_column(String(255), nullable=False, server_default="", comment="公司名")
-    contact_name: Mapped[str] = mapped_column(String(128), nullable=False, server_default="", comment="联系人")
-    contact_mobile: Mapped[str] = mapped_column(String(32), nullable=False, server_default="", comment="联系人手机号")
-    company_type: Mapped[str] = mapped_column(String(32), nullable=False, server_default="", comment="公司类型（如自营、非自营等）")
+    employee_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("employees.id", ondelete="RESTRICT"), nullable=False, comment="员工ID")
+    role_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("roles.id", ondelete="RESTRICT"), nullable=False, comment="角色ID")
+    shop_id: Mapped[int] = mapped_column(BigInteger, nullable=True, comment="可选：不同角色在不同门店生效")
     is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="false", comment="是否删除")
     deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True, comment="删除时间（软删时记录）")
     created_at: Mapped[datetime] = mapped_column(

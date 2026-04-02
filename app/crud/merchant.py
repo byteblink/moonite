@@ -7,13 +7,12 @@ from app.schemas.merchant import MerchantCreate, MerchantUpdate
 
 
 async def list_merchants(
-    session: AsyncSession, *, skip: int, limit: int, include_deleted: bool
+    session: AsyncSession, *, skip: int, limit: int
 ) -> tuple[list[Merchant], int]:
     base = select(Merchant)
     count_q = select(func.count()).select_from(Merchant)
-    if not include_deleted:
-        base = base.where(Merchant.is_deleted.is_(False))
-        count_q = count_q.where(Merchant.is_deleted.is_(False))
+    base = base.where(Merchant.is_deleted.is_(False))
+    count_q = count_q.where(Merchant.is_deleted.is_(False))
     total = int((await session.execute(count_q)).scalar_one())
     rows = (
         await session.execute(base.order_by(Merchant.id.desc()).offset(skip).limit(limit))
@@ -21,10 +20,9 @@ async def list_merchants(
     return list(rows), total
 
 
-async def get_merchant(session: AsyncSession, merchant_id: int, *, include_deleted: bool) -> Merchant | None:
+async def get_merchant(session: AsyncSession, merchant_id: int) -> Merchant | None:
     q = select(Merchant).where(Merchant.id == merchant_id)
-    if not include_deleted:
-        q = q.where(Merchant.is_deleted.is_(False))
+    q = q.where(Merchant.is_deleted.is_(False))
     return (await session.execute(q)).scalar_one_or_none()
 
 

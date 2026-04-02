@@ -7,13 +7,12 @@ from app.schemas.room_order import RoomOrderCreate, RoomOrderUpdate
 
 
 async def list_room_orders(
-    session: AsyncSession, *, skip: int, limit: int, include_deleted: bool
+    session: AsyncSession, *, skip: int, limit: int
 ) -> tuple[list[RoomOrder], int]:
     base = select(RoomOrder)
     count_q = select(func.count()).select_from(RoomOrder)
-    if not include_deleted:
-        base = base.where(RoomOrder.is_deleted.is_(False))
-        count_q = count_q.where(RoomOrder.is_deleted.is_(False))
+    base = base.where(RoomOrder.is_deleted.is_(False))
+    count_q = count_q.where(RoomOrder.is_deleted.is_(False))
     total = int((await session.execute(count_q)).scalar_one())
     rows = (
         await session.execute(base.order_by(RoomOrder.id.desc()).offset(skip).limit(limit))
@@ -21,10 +20,9 @@ async def list_room_orders(
     return list(rows), total
 
 
-async def get_room_order(session: AsyncSession, order_id: int, *, include_deleted: bool) -> RoomOrder | None:
+async def get_room_order(session: AsyncSession, order_id: int) -> RoomOrder | None:
     q = select(RoomOrder).where(RoomOrder.id == order_id)
-    if not include_deleted:
-        q = q.where(RoomOrder.is_deleted.is_(False))
+    q = q.where(RoomOrder.is_deleted.is_(False))
     return (await session.execute(q)).scalar_one_or_none()
 
 

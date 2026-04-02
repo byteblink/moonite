@@ -5,6 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class ShopBase(BaseModel):
+    tenant_id: int
     merchant_id: int  # 所属商家ID
     shop_name: str = ""  # 店铺名
     contact_name: str = ""  # 联系人
@@ -33,6 +34,7 @@ class ShopCreate(ShopBase):
 
 
 class ShopUpdate(BaseModel):
+    tenant_id: int | None = None
     merchant_id: int | None = None  # 所属商家ID
     shop_name: str | None = None  # 店铺名
     contact_name: str | None = None  # 联系人

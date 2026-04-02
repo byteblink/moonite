@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class RoomBase(BaseModel):
+    tenant_id: int
     shop_id: int  # 所属店铺ID
     room_name: str = ""  # 房间名
     room_type: str = ""  # 房间类型（办公/会议/休息等）
@@ -23,6 +24,7 @@ class RoomCreate(RoomBase):
 
 
 class RoomUpdate(BaseModel):
+    tenant_id: int | None = None
     shop_id: int | None = None  # 所属店铺ID
     room_name: str | None = None  # 房间名
     room_type: str | None = None  # 房间类型（办公/会议/休息等）
