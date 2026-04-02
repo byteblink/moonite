@@ -42,3 +42,11 @@ async def update_user(session: AsyncSession, user: User, body: UserUpdate) -> Us
 async def soft_delete_user(session: AsyncSession, user: User) -> None:
     soft_delete_mark(user)
     await session.flush()
+
+
+async def get_user_by_account(session: AsyncSession, account: str) -> User | None:
+    q = select(User).where(
+        (User.username == account) | (User.mobile == account) | (User.email == account)
+    )
+    q = q.where(User.is_deleted.is_(False))
+    return (await session.execute(q)).scalar_one_or_none()

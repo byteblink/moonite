@@ -16,6 +16,15 @@ class Settings(BaseSettings):
     )
     api_host: str = Field(default="0.0.0.0", validation_alias=AliasChoices("API_HOST", "api_host"))
     api_port: int = Field(default=8000, validation_alias=AliasChoices("API_PORT", "api_port"))
+    jwt_secret: str = Field(default="moonite-dev-secret", validation_alias=AliasChoices("JWT_SECRET", "jwt_secret"))
+    access_token_expire_seconds: int = Field(
+        default=3600,
+        validation_alias=AliasChoices("ACCESS_TOKEN_EXPIRE_SECONDS", "access_token_expire_seconds"),
+    )
+    refresh_token_expire_seconds: int = Field(
+        default=604800,
+        validation_alias=AliasChoices("REFRESH_TOKEN_EXPIRE_SECONDS", "refresh_token_expire_seconds"),
+    )
 
 
 settings = Settings()

@@ -18,8 +18,14 @@ async def admin_list_users(
     limit: int = Query(20, ge=1, le=200),
 ):
     items, total = await user_crud.list_users(session, skip=skip, limit=limit)
-    data = Paginated[UserOut](
-        items=[UserOut.model_validate(x) for x in items],
+    # 去掉 password 字段
+    result_items = []
+    for x in items:
+        data_dict = UserOut.model_validate(x).model_dump()
+        data_dict.pop("password", None)
+        result_items.append(data_dict)
+    data = Paginated[dict](
+        items=result_items,
         total=total,
         skip=skip,
         limit=limit,

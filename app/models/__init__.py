@@ -5,6 +5,7 @@ from app.models.room_order import RoomOrder
 from app.models.shop import Shop
 from app.models.user import User
 from app.models.user_auth import UserAuth
+from app.models.user_token import UserToken
 from app.models.employee import Employee
 from app.models.employee_role import EmployeeRole
 from app.models.user_tenant import UserTenant
@@ -20,6 +21,7 @@ __all__ = [
     "Shop",
     "User",
     "UserAuth",
+    "UserToken",
     "Employee",
     "EmployeeRole",
     "UserTenant",
