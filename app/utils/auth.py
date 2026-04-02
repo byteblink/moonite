@@ -6,6 +6,8 @@ import time
 import uuid
 from typing import Any
 
+import jwt
+
 from app.core.config import settings
 
 from passlib.context import CryptContext
@@ -35,20 +37,6 @@ def hash_token(token: str) -> str:
     return hashlib.sha256(token.encode("utf-8")).hexdigest()
 
 
-def _b64url_encode(data: bytes) -> str:
-    return base64.urlsafe_b64encode(data).rstrip(b"=").decode("utf-8")
-
-
-def _b64url_decode(data: str) -> bytes:
-    padding = "=" * (-len(data) % 4)
-    return base64.urlsafe_b64decode(data + padding)
-
-
-def _sign(message: str, secret: str) -> str:
-    digest = hmac.new(secret.encode("utf-8"), message.encode("utf-8"), hashlib.sha256).digest()
-    return _b64url_encode(digest)
-
-
 def create_jwt(*, subject: str, token_type: str, expires_in: int, jti: str | None = None) -> tuple[str, str, int]:
     now = int(time.time())
     exp = now + expires_in
@@ -59,24 +47,9 @@ def create_jwt(*, subject: str, token_type: str, expires_in: int, jti: str | Non
         "exp": exp,
         "jti": jti or str(uuid.uuid4()),
     }
-    header = {"alg": "HS256", "typ": "JWT"}
-    header_part = _b64url_encode(json.dumps(header, separators=(",", ":"), ensure_ascii=True).encode("utf-8"))
-    payload_part = _b64url_encode(json.dumps(claims, separators=(",", ":"), ensure_ascii=True).encode("utf-8"))
-    message = f"{header_part}.{payload_part}"
-    token = f"{message}.{_sign(message, settings.jwt_secret)}"
+    token = jwt.encode(claims, settings.jwt_secret, algorithm="HS256")
     return token, claims["jti"], exp
 
 
 def decode_jwt(token: str) -> dict[str, Any]:
-    parts = token.split(".")
-    if len(parts) != 3:
-        raise ValueError("invalid token")
-    message = f"{parts[0]}.{parts[1]}"
-    expected = _sign(message, settings.jwt_secret)
-    if not hmac.compare_digest(parts[2], expected):
-        raise ValueError("invalid signature")
-    claims = json.loads(_b64url_decode(parts[1]))
-    exp = int(claims.get("exp", 0))
-    if exp <= int(time.time()):
-        raise ValueError("token expired")
-    return claims
+    return jwt.decode(token, settings.jwt_secret, algorithms=["HS256"])

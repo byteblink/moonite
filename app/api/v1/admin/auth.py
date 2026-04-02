@@ -1,5 +1,6 @@
 from datetime import UTC, datetime
 
+import jwt
 from fastapi import APIRouter, Depends, Header, HTTPException, Request
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -64,7 +65,7 @@ async def _current_user(
     access_token = _read_bearer_token(authorization)
     try:
         claims = decode_jwt(access_token)
-    except ValueError as exc:
+    except jwt.InvalidTokenError as exc:
         raise HTTPException(401, str(exc)) from None
     if claims.get("type") != "access":
         raise HTTPException(401, "invalid token type")
@@ -156,7 +157,7 @@ async def admin_register(body: RegisterRequest, request: Request, session: Async
 async def admin_refresh(body: RefreshRequest, request: Request, session: AsyncSession = Depends(get_db)):
     try:
         claims = decode_jwt(body.refresh_token)
-    except ValueError as exc:
+    except jwt.InvalidTokenError as exc:
         raise HTTPException(401, str(exc)) from None
     if claims.get("type") != "refresh":
         raise HTTPException(401, "invalid token type")
@@ -188,7 +189,7 @@ async def admin_logout(
     access_token = _read_bearer_token(authorization)
     try:
         claims = decode_jwt(access_token)
-    except ValueError as exc:
+    except jwt.InvalidTokenError as exc:
         raise HTTPException(401, str(exc)) from None
     user_id = int(claims.get("sub", 0))
     await user_token_crud.revoke_active_tokens_by_user(session, user_id)
