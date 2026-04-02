@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from app.api.v1 import endpoints
+from app.api.v1.admin import router as admin_router
 from app.api.v1.routes import api_router
 from app.core.config import settings
 from app.core.database import engine
@@ -54,5 +54,5 @@ async def health(request: Request):
     return envelope(data={"status": "ok"}, request_id=request_id_from_request(request))
 
 
-app.include_router(endpoints.router, prefix="/admin")
+app.include_router(admin_router, prefix="/admin")
 app.include_router(api_router, prefix="/api/v1")
