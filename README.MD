@@ -6,6 +6,14 @@
 cp .env.example .env
 ```
 
+本地启动
+
+```bash
+uv venv
+source .venv/bin/activate
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
 **Docker Compose（API + Postgres）**
 
 ```bash
