@@ -87,11 +87,13 @@ async def _issue_token_pair(
 ):
     access_token, _, _ = create_jwt(
         subject=str(user_id),
+        tid=str(tenant_id),
         token_type="access",
         expires_in=settings.access_token_expire_seconds,
     )
     refresh_token, refresh_jti, refresh_exp = create_jwt(
         subject=str(user_id),
+        tid=str(tenant_id),
         token_type="refresh",
         expires_in=settings.refresh_token_expire_seconds,
     )
@@ -124,7 +126,7 @@ async def admin_login(body: LoginRequest, request: Request, session: AsyncSessio
         request,
         session,
         user_id=user.id,
-        tenant_id=body.tenant_id,
+        tenant_id=1,
         login_type="password",
         platform=body.platform,
     )
