@@ -11,8 +11,6 @@ async def list_shops(
 ) -> tuple[list[Shop], int]:
     base = select(Shop)
     count_q = select(func.count()).select_from(Shop)
-    base = base.where(Shop.is_deleted.is_(False))
-    count_q = count_q.where(Shop.is_deleted.is_(False))
     total = int((await session.execute(count_q)).scalar_one())
     rows = (await session.execute(base.order_by(Shop.id.desc()).offset(skip).limit(limit))).scalars().all()
     return list(rows), total
@@ -20,7 +18,6 @@ async def list_shops(
 
 async def get_shop(session: AsyncSession, shop_id: int) -> Shop | None:
     q = select(Shop).where(Shop.id == shop_id)
-    q = q.where(Shop.is_deleted.is_(False))
     return (await session.execute(q)).scalar_one_or_none()
 
 

@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.core.database import get_db
+from app.core.database import get_session
 from app.crud import user as user_crud
 from app.crud import user_token as user_token_crud
 from app.schemas.common import Envelope
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/auth", tags=["admin"])
 
 
 class LoginRequest(BaseModel):
-    account: str
+    username: str
     password: str
     tenant_id: int = 1
     platform: str = "admin"
@@ -116,8 +116,8 @@ async def _issue_token_pair(
 
 
 @router.post("/login")
-async def admin_login(body: LoginRequest, request: Request, session: AsyncSession = Depends(get_db)):
-    user = await user_crud.get_user_by_account(session, body.account)
+async def admin_login(body: LoginRequest, request: Request, session: AsyncSession = Depends(get_session)):
+    user = await user_crud.get_user_by_account(session, body.username)
     if not user or not verify_password(body.password, user.password):
         raise HTTPException(401, "invalid account or password")
     data = await _issue_token_pair(
@@ -132,7 +132,7 @@ async def admin_login(body: LoginRequest, request: Request, session: AsyncSessio
 
 
 @router.post("/register")
-async def admin_register(body: RegisterRequest, request: Request, session: AsyncSession = Depends(get_db)):
+async def admin_register(body: RegisterRequest, request: Request, session: AsyncSession = Depends(get_session)):
     exists = await user_crud.get_user_by_account(session, body.username)
     if exists:
         raise HTTPException(409, "username already exists")
@@ -154,7 +154,7 @@ async def admin_register(body: RegisterRequest, request: Request, session: Async
 
 
 @router.post("/refresh")
-async def admin_refresh(body: RefreshRequest, request: Request, session: AsyncSession = Depends(get_db)):
+async def admin_refresh(body: RefreshRequest, request: Request, session: AsyncSession = Depends(get_session)):
     try:
         claims = decode_jwt(body.refresh_token)
     except jwt.InvalidTokenError as exc:
@@ -183,14 +183,14 @@ async def admin_refresh(body: RefreshRequest, request: Request, session: AsyncSe
 @router.post("/logout")
 async def admin_logout(
     request: Request,
-    session: AsyncSession = Depends(get_db),
+    session: AsyncSession = Depends(get_session),
     authorization: str | None = Header(default=None),
 ):
     access_token = _read_bearer_token(authorization)
     try:
         claims = decode_jwt(access_token)
     except jwt.InvalidTokenError as exc:
-        raise HTTPException(401, str(exc)) from None
+        return envelope(data={"ok": True}, request_id=request_id_from_request(request))
     user_id = int(claims.get("sub", 0))
     await user_token_crud.revoke_active_tokens_by_user(session, user_id)
     return envelope(data={"ok": True}, request_id=request_id_from_request(request))
@@ -199,7 +199,7 @@ async def admin_logout(
 @router.get("/me", response_model=Envelope[UserOut])
 async def admin_me(
     request: Request,
-    session: AsyncSession = Depends(get_db),
+    session: AsyncSession = Depends(get_session),
     authorization: str | None = Header(default=None),
 ):
     user = await _current_user(session, authorization)
@@ -210,20 +210,20 @@ async def admin_me(
 async def admin_change_password(
     body: ChangePasswordRequest,
     request: Request,
-    session: AsyncSession = Depends(get_db),
+    session: AsyncSession = Depends(get_session),
     authorization: str | None = Header(default=None),
 ):
     user = await _current_user(session, authorization)
     if not verify_password(body.old_password, user.password):
         raise HTTPException(400, "old password invalid")
     user.password = hash_password(body.new_password)
-    await session.flush()
+    await session.commit()
     await user_token_crud.revoke_active_tokens_by_user(session, user.id)
     return envelope(data={"ok": True}, request_id=request_id_from_request(request))
 
 
 @router.post("/reset-password")
-async def admin_reset_password(body: ResetPasswordRequest, request: Request, session: AsyncSession = Depends(get_db)):
+async def admin_reset_password(body: ResetPasswordRequest, request: Request, session: AsyncSession = Depends(get_session)):
     user = await user_crud.get_user(session, body.user_id)
     if not user:
         raise HTTPException(404, "user not found")

@@ -2,17 +2,16 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
-from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, Identity, Integer, Numeric, String, text
+from sqlalchemy import BigInteger, DateTime, ForeignKey, Integer, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
+from app.models.mixins import BaseFieldsMixin, TenantMixin
 
 
-class RoomOrder(Base):
+class RoomOrder(Base, BaseFieldsMixin, TenantMixin):
     __tablename__ = "room_orders"
 
-    id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True, comment="主键，自增")
-    tenant_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("tenants.id", ondelete="RESTRICT"), nullable=False, comment="租户ID")
     order_number: Mapped[str] = mapped_column(String(50), nullable=False, comment="生成的订单号")
     ref_id: Mapped[Optional[int]] = mapped_column(
         BigInteger, ForeignKey("room_orders.id", ondelete="SET NULL"), nullable=True, comment="续单时为主订单主键ID，新单为 null"
@@ -46,11 +45,3 @@ class RoomOrder(Base):
     refund_time: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True, comment="退款时间")
     pay_channel: Mapped[str] = mapped_column(String(4), nullable=False, server_default="", comment="支付渠道：wechat/alipay/bank/cash/other")
     refund_amount: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 2), nullable=True, comment="退款金额，支持部分退款")
-    is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="false", comment="是否删除")
-    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True, comment="删除时间（软删时记录）")
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, server_default=text("now()"), comment="创建时间，插入时自动赋值"
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, server_default=text("now()"), comment="更新时间，更新时自动赋值"
-    )

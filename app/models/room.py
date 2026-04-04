@@ -1,18 +1,16 @@
-from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
-from sqlalchemy import ARRAY, BigInteger, Boolean, DateTime, ForeignKey, Identity, Integer, Numeric, String, Text, text
+from sqlalchemy import ARRAY, BigInteger, ForeignKey, Integer, Numeric, String, Text, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
+from app.models.mixins import BaseFieldsMixin, TenantMixin
 
 
-class Room(Base):
+class Room(Base, BaseFieldsMixin, TenantMixin):
     __tablename__ = "rooms"
 
-    id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True, comment="主键，自增")
-    tenant_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("tenants.id", ondelete="RESTRICT"), nullable=False, comment="租户ID")
     shop_id: Mapped[int] = mapped_column(
         BigInteger, ForeignKey("shops.id", ondelete="RESTRICT"), nullable=False, comment="所属店铺ID"
     )
@@ -27,11 +25,3 @@ class Room(Base):
         ARRAY(Text), nullable=False, server_default=text("ARRAY[]::text[]"), comment="房间图片列表"
     )
     description: Mapped[str] = mapped_column(Text, nullable=False, server_default="", comment="房间描述")
-    is_deleted: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="false", comment="是否删除")
-    deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True, comment="删除时间（软删时记录）")
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, server_default=text("now()"), comment="创建时间，插入时自动赋值"
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, server_default=text("now()"), comment="更新时间，更新时自动赋值"
-    )

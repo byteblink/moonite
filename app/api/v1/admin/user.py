@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.database import get_db
+from app.core.deps import get_db
 from app.crud import user as user_crud
 from app.schemas.common import Envelope, Paginated
 from app.schemas.user import UserCreate, UserOut, UserUpdate

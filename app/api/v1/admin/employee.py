@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.database import get_db
+from app.core.deps import get_db
 from app.crud import employee as employee_crud
 from app.schemas.common import Envelope, Paginated
 from app.schemas.employee import EmployeeCreate, EmployeeOut, EmployeeUpdate
