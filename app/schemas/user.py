@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class UserBase(BaseModel):
-    password: str = ""
+    # password: str = ""
     email: str = ""
     username: str = ""
     mobile: str = ""  # 手机号

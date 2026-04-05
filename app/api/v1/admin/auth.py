@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.core.database import get_session
+from app.db.database import get_session
 from app.crud import user as user_crud
 from app.crud import user_token as user_token_crud
 from app.schemas.common import Envelope
@@ -126,7 +126,7 @@ async def admin_login(body: LoginRequest, request: Request, session: AsyncSessio
         request,
         session,
         user_id=user.id,
-        tenant_id=1,
+        tenant_id=body.tenant_id,
         login_type="password",
         platform=body.platform,
     )

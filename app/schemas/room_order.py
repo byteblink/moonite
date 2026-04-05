@@ -6,7 +6,6 @@ from pydantic import BaseModel, ConfigDict
 
 
 class RoomOrderBase(BaseModel):
-    tenant_id: int
     order_number: str  # 生成的订单号
     ref_id: int | None = None  # 续单时为主订单主键ID，新单为 null
     user_id: int | None = None  # 下单人ID
@@ -20,6 +19,7 @@ class RoomOrderBase(BaseModel):
     order_price: Decimal | None = None  # 房间单价
     renew_price: Decimal | None = None  # 续单单价
     package_name: str = ""  # 套餐名称
+    package_price: Decimal | None = None  # 套餐总价
     package_price: Decimal | None = None  # 套餐总价
     package_id: int | None = None  # 套餐ID
     total_price: Decimal | None = None  # 总价
@@ -39,7 +39,6 @@ class RoomOrderCreate(RoomOrderBase):
 
 
 class RoomOrderUpdate(BaseModel):
-    tenant_id: int | None = None
     order_number: str | None = None  # 生成的订单号
     ref_id: int | None = None  # 续单时为主订单主键ID，新单为 null
     user_id: int | None = None  # 下单人ID
@@ -71,6 +70,7 @@ class RoomOrderOut(RoomOrderBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int  # 主键，自增
+    tenant_id: int  # 租户ID
     is_deleted: bool  # 是否删除
     created_at: datetime  # 创建时间，插入时自动赋值
     updated_at: datetime  # 更新时间，更新时自动赋值

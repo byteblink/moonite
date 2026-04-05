@@ -8,10 +8,11 @@ from fastapi.responses import JSONResponse
 from app.api.v1.admin import router as admin_router
 from app.api.v1.routes import api_router
 from app.core.config import settings
-from app.core.database import engine
+from app.db.database import engine
 from app.core.exceptions import BusinessException
 from app.core.logger import logger
 from app.utils.response import envelope, request_id_from_request
+import app.db.events 
 
 
 @asynccontextmanager

@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.context import CurrentContext
-from app.core.database import AsyncSessionLocal
+from app.db.database import AsyncSessionLocal
 
 
 async def get_current_context(request: Request) -> CurrentContext:
@@ -22,4 +22,9 @@ async def get_db(
     async with AsyncSessionLocal() as session:
         session.info["tenant_id"] = current.tenant_id
         session.info["user_id"] = current.user_id
-        yield session
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise

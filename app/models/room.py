@@ -4,7 +4,7 @@ from typing import Optional
 from sqlalchemy import ARRAY, BigInteger, ForeignKey, Integer, Numeric, String, Text, text
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.core.database import Base
+from app.db.database import Base
 from app.models.mixins import BaseFieldsMixin, TenantMixin
 
 
