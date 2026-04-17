@@ -6,10 +6,10 @@ from sqlalchemy import BigInteger, DateTime, ForeignKey, Integer, Numeric, Strin
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.database import Base
-from app.models.mixins import BaseFieldsMixin, TenantMixin
+from app.models.mixins import BaseFieldsMixin
 
 
-class RoomOrder(Base, BaseFieldsMixin, TenantMixin):
+class RoomOrder(Base, BaseFieldsMixin):
     __tablename__ = "room_orders"
 
     order_number: Mapped[str] = mapped_column(String(50), nullable=False, comment="生成的订单号")

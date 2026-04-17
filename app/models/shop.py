@@ -4,10 +4,10 @@ from sqlalchemy import ARRAY, BigInteger, Float, ForeignKey, String, Text, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.database import Base
-from app.models.mixins import BaseFieldsMixin, TenantMixin
+from app.models.mixins import BaseFieldsMixin
 
 
-class Shop(Base, BaseFieldsMixin, TenantMixin):
+class Shop(Base, BaseFieldsMixin):
     __tablename__ = "shops"
 
     merchant_id: Mapped[int] = mapped_column(

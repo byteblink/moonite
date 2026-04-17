@@ -2,10 +2,10 @@ from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.database import Base
-from app.models.mixins import BaseFieldsMixin, TenantMixin
+from app.models.mixins import BaseFieldsMixin
 
 
-class Merchant(Base, BaseFieldsMixin, TenantMixin):
+class Merchant(Base, BaseFieldsMixin):
     __tablename__ = "merchants"
 
     company_name: Mapped[str] = mapped_column(String(255), nullable=False, server_default="", comment="公司名")

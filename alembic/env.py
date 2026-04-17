@@ -24,7 +24,7 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app.core.config import settings
-from app.core.database import Base
+from app.db.database import Base
 import app.models  # Required to ensure models are registered with Base
 
 target_metadata = Base.metadata

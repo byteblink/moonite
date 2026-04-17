@@ -22,7 +22,6 @@ class EmployeeOut(EmployeeBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    tenant_id: int
     is_deleted: bool
     created_at: datetime
     updated_at: datetime

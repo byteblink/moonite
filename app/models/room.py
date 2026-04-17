@@ -5,10 +5,10 @@ from sqlalchemy import ARRAY, BigInteger, ForeignKey, Integer, Numeric, String, 
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.database import Base
-from app.models.mixins import BaseFieldsMixin, TenantMixin
+from app.models.mixins import BaseFieldsMixin
 
 
-class Room(Base, BaseFieldsMixin, TenantMixin):
+class Room(Base, BaseFieldsMixin):
     __tablename__ = "rooms"
 
     shop_id: Mapped[int] = mapped_column(

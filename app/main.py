@@ -37,7 +37,7 @@ app.add_middleware(
 
 @app.middleware("http")
 async def add_context_middleware(request: Request, call_next):
-    # Try to extract user_id and tenant_id from JWT
+    # Try to extract user_id from JWT
     auth_header = request.headers.get("Authorization")
     if auth_header and auth_header.lower().startswith("bearer "):
         token = auth_header[7:].strip()
@@ -46,7 +46,6 @@ async def add_context_middleware(request: Request, call_next):
             claims = decode_jwt(token)
             if claims.get("type") == "access":
                 request.state.user_id = int(claims.get("sub", 0))
-                request.state.tenant_id = int(claims.get("tid", 0))
         except Exception:
             pass
     

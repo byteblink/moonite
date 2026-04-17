@@ -8,7 +8,6 @@ class UserTokenOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    tenant_id: int
     user_id: int
     login_type: str = ""
     jti: str = ""

@@ -8,8 +8,6 @@ from app.models.user_auth import UserAuth
 from app.models.user_token import UserToken
 from app.models.employee import Employee
 from app.models.employee_role import EmployeeRole
-from app.models.user_tenant import UserTenant
-from app.models.tenant import Tenant
 from app.models.role import Role
 
 
@@ -24,7 +22,5 @@ __all__ = [
     "UserToken",
     "Employee",
     "EmployeeRole",
-    "UserTenant",
-    "Tenant",
     "Role",
 ]

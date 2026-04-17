@@ -9,11 +9,9 @@ from app.api.v1.admin.role import router as role_router
 from app.api.v1.admin.room import router as room_router
 from app.api.v1.admin.room_order import router as room_order_router
 from app.api.v1.admin.shop import router as shop_router
-from app.api.v1.admin.tenant import router as tenant_router
 from app.api.v1.admin.user import router as user_router
 from app.api.v1.admin.user_auth import router as user_auth_router
 from app.api.v1.admin.user_token import router as user_token_router
-from app.api.v1.admin.user_tenant import router as user_tenant_router
 
 router = APIRouter(tags=["admin"])
 
@@ -26,8 +24,6 @@ router.include_router(room_order_router)
 router.include_router(order_discount_router)
 router.include_router(user_auth_router)
 router.include_router(user_token_router)
-router.include_router(tenant_router)
 router.include_router(role_router)
 router.include_router(employee_router)
 router.include_router(employee_role_router)
-router.include_router(user_tenant_router)

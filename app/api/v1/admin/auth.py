@@ -12,7 +12,7 @@ from app.crud import user_token as user_token_crud
 from app.schemas.common import Envelope
 from app.schemas.user import UserCreate
 from app.schemas.user import UserOut
-from app.utils.auth import create_jwt, decode_jwt, hash_password, hash_token, verify_password
+from app.utils.jwt import create_jwt, decode_jwt, hash_password, hash_token, verify_password
 from app.utils.response import envelope, request_id_from_request
 
 router = APIRouter(prefix="/auth", tags=["admin"])
@@ -21,7 +21,6 @@ router = APIRouter(prefix="/auth", tags=["admin"])
 class LoginRequest(BaseModel):
     username: str
     password: str
-    tenant_id: int = 1
     platform: str = "admin"
 
 
@@ -81,25 +80,21 @@ async def _issue_token_pair(
     session: AsyncSession,
     *,
     user_id: int,
-    tenant_id: int,
     login_type: str = "password",
     platform: str = "admin",
 ):
     access_token, _, _ = create_jwt(
         subject=str(user_id),
-        tid=str(tenant_id),
         token_type="access",
         expires_in=settings.access_token_expire_seconds,
     )
     refresh_token, refresh_jti, refresh_exp = create_jwt(
         subject=str(user_id),
-        tid=str(tenant_id),
         token_type="refresh",
         expires_in=settings.refresh_token_expire_seconds,
     )
     await user_token_crud.create_user_token(
         session,
-        tenant_id=tenant_id,
         user_id=user_id,
         login_type=login_type,
         jti=refresh_jti,
@@ -126,7 +121,6 @@ async def admin_login(body: LoginRequest, request: Request, session: AsyncSessio
         request,
         session,
         user_id=user.id,
-        tenant_id=body.tenant_id,
         login_type="password",
         platform=body.platform,
     )
@@ -174,7 +168,6 @@ async def admin_refresh(body: RefreshRequest, request: Request, session: AsyncSe
         request,
         session,
         user_id=user_id,
-        tenant_id=token_row.tenant_id,
         login_type=token_row.login_type or "password",
         platform=token_row.platform or "admin",
     )

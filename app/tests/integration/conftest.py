@@ -4,7 +4,7 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy import text
 
 import app.models  # noqa: F401 — 注册 ORM 元数据
-from app.core.database import Base, engine
+from app.db.database import Base, engine
 from app.main import app
 
 pytestmark = pytest.mark.integration

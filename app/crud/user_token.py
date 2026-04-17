@@ -42,7 +42,6 @@ async def unrevoke_user_token(session: AsyncSession, token: UserToken) -> UserTo
 async def create_user_token(
     session: AsyncSession,
     *,
-    tenant_id: int,
     user_id: int,
     login_type: str,
     jti: str,
@@ -53,7 +52,6 @@ async def create_user_token(
     ip: str,
 ) -> UserToken:
     row = UserToken(
-        tenant_id=tenant_id,
         user_id=user_id,
         login_type=login_type,
         jti=jti,

@@ -37,12 +37,11 @@ def hash_token(token: str) -> str:
     return hashlib.sha256(token.encode("utf-8")).hexdigest()
 
 
-def create_jwt(*, subject: str, tid: str, token_type: str, expires_in: int, jti: str | None = None) -> tuple[str, str, int]:
+def create_jwt(*, subject: str, token_type: str, expires_in: int, jti: str | None = None) -> tuple[str, str, int]:
     now = int(time.time())
     exp = now + expires_in
     claims = {
         "sub": subject,
-        "tid": tid,
         "type": token_type,
         "iat": now,
         "exp": exp,
